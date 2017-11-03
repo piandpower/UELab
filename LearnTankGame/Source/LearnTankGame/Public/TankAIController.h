@@ -16,7 +16,7 @@ class LEARNTANKGAME_API ATankAIController : public AAIController
 	
 public:
 
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 	ATank* GetControlledTank();
 
