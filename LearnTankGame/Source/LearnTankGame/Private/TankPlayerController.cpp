@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankPlayerController.h"
+#include "TankAimComponent.h"
 #include "Engine/World.h"
 
 
@@ -35,7 +36,8 @@ void ATankPlayerController::AimToTarget()
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HitLocation %s"), *HitLocation.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("HitLocation %s"), *HitLocation.ToString());
+		GetControlledTank()->FindComponentByClass<UTankAimComponent>()->AimAt(HitLocation);
 	}
 }
 
