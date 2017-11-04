@@ -1,11 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
-
 #include "TankTurret.h"
 #include "TankBarrel.h"
+#include "Projectile.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TankAimComponent.generated.h"
+
+UENUM()
+enum class EFireState :uint8
+{
+	Reloading,
+	Aiming,
+	Locked,
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEARNTANKGAME_API UTankAimComponent : public UActorComponent
@@ -26,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category = "Setup")
 		void Initialise(UTankTurret* TurretToSet, UTankBarrel* BarrelToSet);
+
+	UFUNCTION(BlueprintCallable, Category = "Gmaeplay")
+		void Fire();
 	
 	void AimAt(FVector HitLocation);
 
@@ -34,6 +45,20 @@ public:
 	UTankBarrel* Barrel = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
-		float LaunchSpeed = 100000.0f;
-	
+		float TankReloadTime = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float LaunchSpeed = 10000.0f;
+
+	UPROPERTY(EditAnywhere,Category = "Setup")
+		TSubclassOf<AProjectile> ProjectileType;
+
+	UPROPERTY(BlueprintReadOnly)
+		EFireState FireState = EFireState::Aiming;
+
+private:
+	double LastFireTime = 0;
+
+
 };
+

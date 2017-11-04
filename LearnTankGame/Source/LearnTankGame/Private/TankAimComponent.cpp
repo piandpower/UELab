@@ -2,6 +2,7 @@
 
 #include "TankAimComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -29,14 +30,44 @@ void UTankAimComponent::BeginPlay()
 void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (Barrel == nullptr || ProjectileType == nullptr)
+		return;
+	if (FPlatformTime::Seconds() - LastFireTime > TankReloadTime)
+	{
+		FireState = EFireState::Reloading;
+		return;
+	}
 
-	// ...
+	if (FMath::Abs(Turret->GetChangeYaw()) > 3)
+	{
+		FireState = EFireState::Aiming;
+		return;
+	}
+	FireState = EFireState::Locked;
+
 }
 
 void UTankAimComponent::Initialise(UTankTurret* TurretToSet, UTankBarrel* BarrelToSet)
 {
 	Turret = TurretToSet;
 	Barrel = BarrelToSet;
+}
+
+void UTankAimComponent::Fire()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+	bool bIsReload = (FPlatformTime::Seconds() - LastFireTime) > TankReloadTime;
+
+	if (Barrel == nullptr || ProjectileType == nullptr || !bIsReload)
+		return;
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileType,
+		Barrel->GetSocketLocation(FName("FireLocation")),
+		Barrel->GetSocketRotation(FName("FireLocation"))
+		);
+	Projectile->LaunchProjectile(LaunchSpeed);
+	LastFireTime = FPlatformTime::Seconds();
 }
 
 void UTankAimComponent::AimAt(FVector HitLocation)
