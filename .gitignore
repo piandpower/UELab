@@ -82,3 +82,6 @@ Plugins/*/Intermediate/*
 Plugins/*/Binaries/*
 
 # End of https://www.gitignore.io/api/unrealengine
+/UELab/Binaries
+/UELab/Intermediate
+/UELab/Saved
